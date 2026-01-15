@@ -10,6 +10,10 @@
 #   must be entered into the OLD_DIR and NEW_DIR variables manually for
 #   this code to work.
 #
+#   As I cannot provide the source assets for this project,
+#   this segment of code is tested locally, and I cannot guarantee the
+#   code to work for every machine.
+#
 
 from pathlib import Path
 import os
