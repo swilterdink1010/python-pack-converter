@@ -42,9 +42,9 @@ def rel_check(item):
 
 
 def item_check(item, rel):
-    if Path(os.path.join(rel,item.name)).exists():
+    if Path(os.path.join(rel, item.name)).exists():
         # Put into a dictionary for automatic recording
-        rel_auto[str(item)] = os.path.join(rel,item.name)
+        rel_auto[str(item)] = os.path.join(rel, item.name)
     else:
         # Put into a list for manual recording
         rel_manual[str(item)] = str(rel)
