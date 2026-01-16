@@ -1,24 +1,22 @@
-#
-#   Program meant to parse game assets, pair them, and store their file
-#   location mappings in a json file.
-#
-#   This code was originally written to map version 1.8.9 textures
-#   to version 1.21.10. The paths in REL_FOLDERS are subject to change
-#   as Mojang updates Minecraft's asset file structure.
-#
-#   Minecraft's game assets must be legally acquired and their paths
-#   must be entered into the OLD_DIR and NEW_DIR variables manually for
-#   this code to work.
-#
-#   As I cannot provide the source assets for this project,
-#   this segment of code is tested locally, and I cannot guarantee the
-#   code to work for every machine.
-#
+"""
+Program meant to parse game assets, pair them, and store their file
+location mappings in a json file.
 
-from pathlib import Path
+Originally written to map version 1.8.9 textures
+to version 1.21.10. The paths in REL_FOLDERS are subject to change
+as Mojang updates Minecraft's asset file structure.
+
+Minecraft's game assets must be legally acquired and their paths
+must be entered into the OLD_DIR and NEW_DIR variables manually for
+this code to work.
+
+This code is tested locally and may not work on all machines.
+"""
+
+import json
 import os
 import sys
-import json
+from pathlib import Path
 
 OLD_DIR = Path("./ASSETS_1.8.9")
 NEW_DIR = Path("./ASSETS_1.21.10")
@@ -27,11 +25,11 @@ if not (OLD_DIR.exists() and NEW_DIR.exists()):
     sys.exit("Asset directories could not be found.")
 
 REL_FOLDERS = {
-    Path(os.path.join(OLD_DIR,"assets/minecraft/textures/items")): 
-        Path(os.path.join(NEW_DIR,"assets/minecraft/textures/item")),
-    Path(os.path.join(OLD_DIR,"assets/minecraft/textures/blocks")): 
-        Path(os.path.join(NEW_DIR,"assets/minecraft/textures/block"))
-               }
+    Path(os.path.join(OLD_DIR, "assets/minecraft/textures/items")): 
+        Path(os.path.join(NEW_DIR, "assets/minecraft/textures/item")),
+    Path(os.path.join(OLD_DIR, "assets/minecraft/textures/blocks")): 
+        Path(os.path.join(NEW_DIR, "assets/minecraft/textures/block"))
+}
 
 rel_auto = {}
 rel_manual = {}
@@ -41,7 +39,8 @@ def rel_check(item):
         for path in item.parents:
             if rel == path:
                 item_check(item, REL_FOLDERS[rel])
-    
+
+
 def item_check(item, rel):
     if Path(os.path.join(rel,item.name)).exists():
         # Put into a dictionary for automatic recording
@@ -50,14 +49,16 @@ def item_check(item, rel):
         # Put into a list for manual recording
         rel_manual[str(item)] = str(rel)
 
-def dir_iterate(dir):
-    for item in dir.iterdir():
+
+def dir_iterate(dir_):
+    for item in dir_.iterdir():
         if item.is_dir():
             dir_iterate(item)
         else:
             rel_check(item)
 
+
 dir_iterate(OLD_DIR)
 
-with open("map.json", "w") as map:
-    map.write(json.dumps(rel_auto, indent=4))
+with open("map.json", "w") as map_:
+    map_.write(json.dumps(rel_auto, indent=4))
