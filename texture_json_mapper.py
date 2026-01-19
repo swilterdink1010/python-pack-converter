@@ -7,8 +7,8 @@ to version 1.21.10. The paths in REL_FOLDERS are subject to change
 as Mojang updates Minecraft's asset file structure.
 
 Minecraft's game assets must be legally acquired and their paths
-must be entered into the OLD_DIR and NEW_DIR variables manually for
-this code to work.
+must be entered into the OLD_DIR and NEW_DIR variables in rels.py 
+for this code to work.
 
 This code is tested locally and may not work on all machines.
 """
@@ -18,18 +18,15 @@ import os
 import sys
 from pathlib import Path
 
-OLD_DIR = Path("./ASSETS_1.8.9")
-NEW_DIR = Path("./ASSETS_1.21.10")
+from rels import REL_FOLDERS
+from rels import NEW_DIR
+from rels import OLD_DIR
+
+# Value that controls whether manual logging of textures is overwritten.
+manual_override = False
 
 if not (OLD_DIR.exists() and NEW_DIR.exists()):
     sys.exit("Asset directories could not be found.")
-
-REL_FOLDERS = {
-    Path(os.path.join(OLD_DIR, "assets/minecraft/textures/items")): 
-        Path(os.path.join(NEW_DIR, "assets/minecraft/textures/item")),
-    Path(os.path.join(OLD_DIR, "assets/minecraft/textures/blocks")): 
-        Path(os.path.join(NEW_DIR, "assets/minecraft/textures/block"))
-}
 
 rel_auto = {}
 rel_manual = {}
@@ -39,7 +36,6 @@ def rel_check(item):
         for path in item.parents:
             if rel == path:
                 item_check(item, REL_FOLDERS[rel])
-
 
 def item_check(item, rel):
     if Path(os.path.join(rel, item.name)).exists():
@@ -62,3 +58,7 @@ dir_iterate(OLD_DIR)
 
 with open("map.json", "w") as map_:
     map_.write(json.dumps(rel_auto, indent=4))
+
+if manual_override:
+    with open("map_manual.json", "w") as map_:
+        map_.write(json.dumps(rel_manual, indent=4))
